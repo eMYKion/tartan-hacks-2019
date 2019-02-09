@@ -47,11 +47,14 @@ function getResource(file){
 var PCRecources = [//must be in order of dependencies
     "/PointerLockControls.js", 
     "/keyboard.js",
+    
     "/pc_client.js"
 ];
 
 var MobileRecources = [//must be in order of dependencies
     "/DeviceOrientationControls.js",
+    //"/pinch-zoom.js",
+    
     "/mobile_client.js"
 ];
 

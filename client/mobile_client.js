@@ -28,6 +28,14 @@ var fallLimit = -100;
 var controls, room;
 var container = document.getElementById("container");
 
+//pinch/zoom
+var pz = new PinchZoom(container, {minZoom: 0.1, maxZoom: 4});
+pz.enable();
+
+document.addEventListener("pz_zoomupdate", function(){
+    console.log("zoomed device");
+});
+
 var renderer = THREE.WebGLRenderer();//aliasing
 var camera = new THREE.PerspectiveCamera(VIEW_ANGLE, ASPECT, NEAR, FAR);
 var loader = new THREE.FBXLoader();

@@ -241,20 +241,24 @@ function update() {
 
     //socket send player
     socket.emit(Message.PLAYER, {
-    	x : controls.getObject().position.x, 
-    	y : controls.getObject().position.y, 
-    	z : controls.getObject().position.z
+    	x : -room.position.x + controls.getObject().position.x, 
+    	y : -room.position.y + EyeHeight + controls.getObject().position.y, 
+    	z : -room.position.z + controls.getObject().position.z
     });
     
-    socket.emit(Message.WORLD, {
-    	x : worldInfo.x, 
-    	y : worldInfo.y, 
-    	z : worldInfo.z, 
-    	
-    	xs : worldInfo.xs, 
-    	ys : worldInfo.ys, 
-    	zs : worldInfo.zs
-    });
+    if(worldInfo != undefined) {
+    if(!(worldInfo.xs == undefined || worldInfo.ys == undefined || worldInfo.zs == undefined)){
+	    socket.emit(Message.WORLD, {
+	    	x : worldInfo.x, 
+	    	y : worldInfo.y, 
+	    	z : worldInfo.z, 
+	    	
+	    	xs : worldInfo.xs, 
+	    	ys : worldInfo.ys, 
+	    	zs : worldInfo.zs
+	    });
+    }
+    }
     
   	renderer.render(scene, camera);
   	requestAnimationFrame(update);

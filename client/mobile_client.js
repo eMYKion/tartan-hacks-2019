@@ -51,8 +51,25 @@ hammertime.on('pan', function(ev) {
 hammertime.get('pinch').set({ enable: true });
 hammertime.on('pinch', function(ev) {
 	console.log(ev);
-	document.getElementById("message").innerHTML = ev.scale;
+	document.getElementById("message").innerHTML = "" + room.scale.x  + ", " +  room.scale.y  + ", " + room.scale.z;
+	//alert("" + room.scale.x  + ", " +  room.scale.y  + ", " + room.scale.z)
 	requestStretch = Math.log(ev.scale)/Math.log(2);
+	requestStretch = Math.min(requestStretch, 1);
+	requestStretch = Math.max(requestStretch, -1);
+	
+	
+	console.log(requestStretch);
+	
+	stretchState = requestStretch;
+	
+	var stretch = Math.pow(2, stretchState);
+	var squash = 1 / Math.sqrt(stretch);
+
+	//var newScale = new THREE.Vector3(squash, stretch, squash);
+	var newScale = new THREE.Vector3(squash, stretch, squash);
+	room.scale.x = newScale.x;
+	room.scale.y = newScale.y;
+	room.scale.z = newScale.z;
 });
 /*function pointermove_handler(ev) {
  // This function implements a 2-pointer horizontal pinch/zoom gesture. 
@@ -142,7 +159,7 @@ var stretchState = 0;
 
 
 function doStretch() {
-    /*
+    
 	//Get the previous amount the room was stretched
 	var pastScale = room.scale.clone();
 	//Get the position of the room relative to the player's feet
@@ -152,19 +169,9 @@ function doStretch() {
 
 	//Calculate our proportions
 	//var stretch = Math.pow(2,Math.sin(Date.now() / 1000));
-	
-	console.log(requestStretch);
-	
-	stretchState = requestStretch;
-	
-	var stretch = Math.pow(2, stretchState);
-	var squash = 1 / Math.sqrt(stretch);
-
-	//var newScale = new THREE.Vector3(squash, stretch, squash);
-	var newScale = new THREE.Vector3(squash, stretch, squash);
 
 	//Resize the room
-	room.scale.x = newScale.x;
+	/*room.scale.x = newScale.x;
 	room.scale.y = newScale.y;
 	room.scale.z = newScale.z;
 
@@ -177,15 +184,7 @@ function doStretch() {
 	room.position.x = camera.position.x + offset.x;
 	room.position.y = camera.position.y - EyeHeight + offset.y;
 	room.position.z = camera.position.z + offset.z;
-    
-    worldInfo.sx = room.scale.x;
-    worldInfo.sy = room.scale.y;
-    worldInfo.sz = room.scale.z;
-    worldInfo.x = room.position.x;
-    worldInfo.y = room.position.y;
-    worldInfo.z = room.position.z;
     */
-    
 }
 
 /*
@@ -301,12 +300,12 @@ function update() {
     playerBox.position.y = playerInfo.y;
     playerBox.position.z = playerInfo.z;
     
-    room.scale.x = worldInfo.sx;
-    room.scale.y = worldInfo.sy;
-    room.scale.z = worldInfo.sz;
-    room.position.x = worldInfo.x;
+    //room.scale.x = worldInfo.sx;
+    //room.scale.y = worldInfo.sy;
+    //room.scale.z = worldInfo.sz;
+    /*room.position.x = worldInfo.x;
     room.position.y = worldInfo.y;
-    room.position.z = worldInfo.z;
+    room.position.z = worldInfo.z;*/
 	
 	
 	//doStretch();

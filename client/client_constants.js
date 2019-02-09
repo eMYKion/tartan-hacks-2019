@@ -1,7 +1,7 @@
 const Message  = {
     CONNECTION : "connection",
     DISCONNECT : "disconnect",
-    WORLD : "world",
+    WORLD : "world",//{x, y, z, sx, sy, sz}
     STRETCH_REQUEST : "stretch_request",
-    PLAYER : "player",
+    PLAYER : "player"//{x, y, x}
 };

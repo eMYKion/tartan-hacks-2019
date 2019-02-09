@@ -1,5 +1,8 @@
-var PORT = process.env.PORT;
-var IP = process.env.IP;
+//var PORT = process.env.PORT;
+//var IP = process.env.IP;
+var PORT = 3000;
+var IP = "localhost";
+
 
 const Message = require("./server_constants.js")
 //app is a function handler
@@ -33,15 +36,15 @@ io.on(Message.CONNECTION, function(socket){
         socket.disconnect(true);
         return;    
     }
-    
+    //add client to list
     clientQueue.unshift(socket);
     console.log("a user connected, " + clientQueue.length + " clients connected.");
     
     
-    socket.on(Message.WORLD, function(msg){
+    /*socket.on(Message.WORLD, function(msg){
         
         console.log(msg.data);
-    });
+    });*/
     
     socket.on(Message.DISCONNECT, function(){
         console.log("a user disconnected");
@@ -61,7 +64,7 @@ io.on(Message.CONNECTION, function(socket){
 });
 
 http.listen(PORT, IP, function(){
-    console.log("listening on *:3000");
+    console.log("listening on " + IP + ":" + PORT);
 });
 
 

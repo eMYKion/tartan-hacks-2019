@@ -1,4 +1,6 @@
-var PORT = 3000;
+var PORT = process.env.PORT;
+var IP = process.env.IP;
+
 const Message = require("./server_constants.js")
 //app is a function handler
 var express = require("express");
@@ -58,7 +60,7 @@ io.on(Message.CONNECTION, function(socket){
     
 });
 
-http.listen(PORT, function(){
+http.listen(PORT, IP, function(){
     console.log("listening on *:3000");
 });
 

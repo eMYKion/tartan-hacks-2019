@@ -14,28 +14,64 @@ function isMobile(){
 
 var xhttp = new XMLHttpRequest();
 
+var success = true;
+var scriptResponses = [];
+
+function addScriptsAsElements(scripts){
+    var tmp = scripts.slice();
+    
+    while(tmp.length > 0){
+        var script = document.createElement("script");
+        script.text = tmp.pop();//get earliest loaded response
+        document.head.appendChild(script);
+    }
+}
+
 xhttp.onreadystatechange = function(){
     if(this.readyState == 4 && this.status == 200){
         
-        var script = document.createElement("script");
-        script.text = xhttp.responseText;
-        console.log("got script");
-        document.head.appendChild(script);
+        scriptResponses.unshift(xhttp.responseText);
+        
+    }else if(this.readyState == 4 && this.status == 404){
+        
+        success = false;
+        
     }
 };
 
-if(!isMobile()){
-    xhttp.open("GET", "/PointerLockControls.js", false);
+function getResource(file){
+    xhttp.open("GET", file, false);
     xhttp.send();
-    xhttp.open("GET", "/keyboard.js", false);
-    xhttp.send();
-    xhttp.open("GET", "/pc_client.js", false);
-    xhttp.send();
-}else{
-    xhttp.open("GET", "/DeviceOrientationControls.js", false);
-    xhttp.send();
-    xhttp.open("GET", "/mobile_client.js", false);
-    xhttp.send();   
 }
 
-console.log("Finished loading client.");
+var PCRecources = [//must be in order of dependencies
+    "/PointerLockControls.js", 
+    "/keyboard.js",
+    "/pc_client.js"
+];
+
+var MobileRecources = [//must be in order of dependencies
+    "/DeviceOrientationControls.js",
+    "/mobile_client.js"
+];
+
+if(!isMobile()){
+    for(var i = 0; i < PCRecources.length; i++){
+        getResource(PCRecources[i]);
+    }
+}else{
+    for(var i = 0; i < MobileRecources.length; i++){
+        getResource(MobileRecources[i]);
+    }
+}
+
+if(!success){
+    alert("got 404 for one or more files");
+    console.log("got 404 for one or more files");
+    var msg = document.createElement("h1");
+    msg.innerHTML = "One or more files failed to load!";
+    document.body.appendChild(msg);
+}else{
+    addScriptsAsElements(scriptResponses);
+    console.log("Finished loading client.");
+}

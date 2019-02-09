@@ -1,10 +1,12 @@
-var PORT = process.env.PORT;
-var IP = process.env.IP;
-//var PORT = 3000;
-//var IP = "localhost";
+var PORT = 3000;
+var IP = "localhost";
 
+if(!(process.env.IP == undefined || process.env.PORT == undefined)){
+    PORT = process.env.PORT;
+    IP = process.env.IP;
+}
 
-const Message = require("./server_constants.js")
+const Message = require("./server_constants.js");
 //app is a function handler
 var express = require("express");
 var app = express();
@@ -51,7 +53,6 @@ io.on(Message.CONNECTION, function(socket){
     });
     
     socket.on(Message.PLAYER, function(msg){
-        console.log(msg);
         for(var i = 0; i < clientQueue.length; i++){
             sock = clientQueue[i];
             if(sock.id != socket.id){
@@ -69,7 +70,7 @@ io.on(Message.CONNECTION, function(socket){
             sock = clientQueue[i];
             if(sock.id == socket.id){
                 clientQueue.splice(i, 1);
-                console.log("removed client from list");
+                console.log("removed client from list, " + clientQueue.length + " remaining");
                 break;
             }
         }

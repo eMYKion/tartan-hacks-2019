@@ -3,5 +3,6 @@ const Message  = {
     DISCONNECT : "disconnect",
     WORLD : "world",//{x, y, z, sx, sy, sz}
     STRETCH_REQUEST : "stretch_request",
-    PLAYER : "player"//{x, y, x}
+    PLAYER : "player",//{x, y, x}
+    MOBILE_PERSPECTIVE : "mobile_perspective"
 };

@@ -1,10 +1,12 @@
 <!DOCTYPE html>
 <html>
     <head>
+        <!--there are shared resource regardless of client type-->
         <script src="/three.min.js"></script>
         <script src="/socket.io.slim.js"></script>
         <script src="/client_constants.js"></script>
 	    <script src="/FBXLoader.js"></script>
+        <script src="/inflate.min.js"></script>
     </head>
     
     <body>
@@ -14,7 +16,8 @@
         <div id="container">
             
         </div>
-    
+
+        <!--this will get client-type specific resources-->
         <script src="/decide_client_type.js"></script>
     </body>
 </html>

@@ -34,7 +34,7 @@ var FAR = 1000;
 var EyeHeight = 2;
 var fallLimit = -100;
 
-var controls, room;
+var controls, room, camera;
 var container = document.getElementById("container");
 //container.requestFullscreen();
 
@@ -45,13 +45,10 @@ var container = document.getElementById("container");
 var requestStretch = 1;
 
 var hammertime = new Hammer(container);
-hammertime.on('pan', function(ev) {
-	console.log(ev);
-});
 hammertime.get('pinch').set({ enable: true });
 hammertime.on('pinch', function(ev) {
 	console.log(ev);
-	
+	//document.getElementById("message").innerHTML = "" + room.scale.x  + ", " +  room.scale.y  + ", " + room.scale.z;
 	//alert("" + room.scale.x  + ", " +  room.scale.y  + ", " + room.scale.z)
 	requestStretch = Math.log(ev.scale)/Math.log(2);
 	requestStretch = Math.min(requestStretch, 1);
@@ -71,6 +68,28 @@ hammertime.on('pinch', function(ev) {
 	room.scale.y = newScale.y;
 	room.scale.z = newScale.z;
 });
+
+var rotX = 0
+var rotY = 0;
+var pastRotX = 0
+var pastRotY = 0
+
+hammertime.on('panstart', function(ev) {
+	//panStart.x = ev.deltaX
+	//document.getElementById("message").innerHTML = "" + ev.deltaX  + ", " + ev.deltaY;
+	pastRotX = rotX;
+	pastRotY = rotY;
+});
+hammertime.on('panmove', function(ev) {
+	rotX = pastRotX + ev.deltaX / -2;
+	rotY = pastRotY + ev.deltaY / -2;
+	//document.getElementById("message").innerHTML = "" + Math.PI * rotX / 180;//  + ", " + rotY;
+	
+	camera.rotation.y = Math.PI * rotX / 180;
+	camera.position.x = 25 * Math.sin(Math.PI * rotX / 180)
+	camera.position.z = 25 * Math.cos(Math.PI * rotX / 180) - 5
+});
+
 /*function pointermove_handler(ev) {
  // This function implements a 2-pointer horizontal pinch/zoom gesture. 
  //
@@ -120,7 +139,7 @@ hammertime.on('pinch', function(ev) {
 
 
 var renderer = THREE.WebGLRenderer();//aliasing
-var camera = new THREE.PerspectiveCamera(VIEW_ANGLE, ASPECT, NEAR, FAR);
+camera = new THREE.PerspectiveCamera(VIEW_ANGLE, ASPECT, NEAR, FAR);
 var loader = new THREE.FBXLoader();
 var scene = new THREE.Scene();
 var pastTime = Date.now();
@@ -140,17 +159,14 @@ var offset = new THREE.Vector3(0, 0, 0);
 
 buildWorld(0);
 
+//cameraHolder = new THREE.Group();
+//cameraHolder.add(camera)
 
-cameraHolder = new THREE.Group();
-cameraHolder.add(camera);
-
-document.getElementById("message").innerHTML = "" + cameraHolder;
-
-controls = new THREE.DeviceOrientationControls(cameraHolder);
-controls.connect();
-camera.position.y = 0;
+//controls = new THREE.DeviceOrientationControls(camera);
+//controls.connect();
+camera.position.y = 2.5;
 camera.position.x = 0;
-camera.position.z = 0;
+camera.position.z = 20;
 
 //enablePointerLock();
 
@@ -348,7 +364,7 @@ function update() {
     	scale : requestStretch
     });
     
-    controls.update();
+    //controls.update();
   	renderer.render(scene, camera);
   	requestAnimationFrame(update);
 }

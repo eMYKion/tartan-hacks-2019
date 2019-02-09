@@ -24,8 +24,11 @@ var EyeHeight = 2;
 var controls, room;
 var container = document.getElementById("container");
 
-var renderer = THREE.WebGLRenderer();
+var renderer = new THREE.WebGLRenderer();
 var camera = new THREE.PerspectiveCamera(VIEW_ANGLE, ASPECT, NEAR, FAR);
+camera.position.y = 5;
+camera.position.z = 5;
+
 var loader = new THREE.FBXLoader();
 var scene = new THREE.Scene();
 var pastTime = Date.now();

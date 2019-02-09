@@ -32,9 +32,10 @@ if(!isMobile()){
     xhttp.open("GET", "/pc_client.js", false);
     xhttp.send();
 }else{
-    xhttp.open("GET", "/mobile_client.js", false);
+    xhttp.open("GET", "/DeviceOrientationControls.js", false);
     xhttp.send();
+    xhttp.open("GET", "/mobile_client.js", false);
+    xhttp.send();   
 }
-
 
 console.log("Finished loading client.");

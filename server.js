@@ -41,10 +41,13 @@ io.on(Message.CONNECTION, function(socket){
     console.log("a user connected, " + clientQueue.length + " clients connected.");
     
     
-    /*socket.on(Message.WORLD, function(msg){
-        
-        console.log(msg.data);
-    });*/
+    socket.on(Message.WORLD, function(msg){
+        io.emit(Message.WORLD, msg);
+    });
+    
+    socket.on(Message.PLAYER, function(msg){
+        io.emit(Message.PLAYER, msg);
+    });
     
     socket.on(Message.DISCONNECT, function(){
         console.log("a user disconnected");

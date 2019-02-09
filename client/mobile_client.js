@@ -2,7 +2,11 @@ var socket = io();
 
 var playerInfo = {x:0, y:0, z:0};
 var worldInfo = {x:0, y:0, z:0, sx:1, sy:1, sz:1};
-var playerBox = null;
+
+var playerBox = new THREE.Mesh (
+    new THREE.BoxGeometry(1, 2, 1),
+    new THREE.MeshBasicMaterial({color:0xffa500})
+);
 
 //set callback to set worldInfo from server
 socket.on(Message.WORLD, function(msg){
@@ -23,7 +27,7 @@ var EyeHeight = 2;
 var controls, room;
 var container = document.getElementById("container");
 
-var renderer = THREE.WebGLRenderer();
+var renderer = new THREE.WebGLRenderer();
 var camera = new THREE.PerspectiveCamera(VIEW_ANGLE, ASPECT, NEAR, FAR);
 var loader = new THREE.FBXLoader();
 var scene = new THREE.Scene();
@@ -35,9 +39,11 @@ var offset = new THREE.Vector3(0, 0, 0);
 
 buildWorld();
 
-controls = new THREE.PointerLockControls( camera );
-scene.add( controls.getObject() );
-controls.getObject().position.y = 2;
+controls = new THREE.DeviceOrientationControls(camera);
+controls.connect();
+//controls = //new THREE.PointerLockControls( camera );
+//scene.add( controls.getObject() );
+//controls.getObject().position.y = 2;
 
 var renderer = new THREE.WebGLRenderer();
 renderer.setSize(WIDTH, HEIGHT);
@@ -49,9 +55,9 @@ requestAnimationFrame(update);
 function doStretch() {
     
 	var pastScale = room.scale.clone();
-	offset = new  THREE.Vector3(room.position.x - (controls.getObject().position.x), 
-								room.position.y - (controls.getObject().position.y - EyeHeight),
-								room.position.z - (controls.getObject().position.z));
+	offset = new  THREE.Vector3(room.position.x - (camera.position.x), 
+								room.position.y - (camera.position.y - EyeHeight),
+								room.position.z - (camera.position.z));
 
 	console.log(offset.y);
 
@@ -71,9 +77,9 @@ function doStretch() {
 	offset.y = offset.y / pastScale.x * newScale.y;
 	offset.z = offset.z / pastScale.x * newScale.z;
 
-	room.position.x = controls.getObject().position.x + offset.x;
-	room.position.y = (controls.getObject().position.y - EyeHeight) + offset.y;
-	room.position.z = controls.getObject().position.z + offset.z;
+	room.position.x = camera.position.x + offset.x;
+	room.position.y = (camera.position.y - EyeHeight) + offset.y;
+	room.position.z = camera.position.z + offset.z;
     
     
     //set the message to send
@@ -168,6 +174,7 @@ function update() {
     playerBox.position.y = playerInfo.y;
     playerBox.position.z = playerInfo.z;
     
+    controls.update();
 
   	renderer.render(scene, camera);
   	requestAnimationFrame(update);
@@ -175,11 +182,6 @@ function update() {
 
 function buildWorld() {
 	//Container for all room geometry
-    
-    var playerBox = new THREE.Mesh (
-        new THREE.BoxGeometry(1, 2, 1),
-        new THREE.MeshBasicMaterial({color:0xffa500})
-    );
 
     
 	room = new THREE.Group();

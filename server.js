@@ -1,7 +1,7 @@
-//var PORT = process.env.PORT;
-//var IP = process.env.IP;
-var PORT = 3000;
-var IP = "localhost";
+var PORT = process.env.PORT;
+var IP = process.env.IP;
+//var PORT = 3000;
+//var IP = "localhost";
 
 
 const Message = require("./server_constants.js")
@@ -42,12 +42,24 @@ io.on(Message.CONNECTION, function(socket){
     
     
     socket.on(Message.WORLD, function(msg){
-        io.emit(Message.WORLD, msg);
+        for(var i = 0; i < clientQueue.length; i++){
+            sock = clientQueue[i];
+            if(sock.id != socket.id){
+                sock.emit(Message.WORLD, msg);    
+            }
+        }
     });
     
     socket.on(Message.PLAYER, function(msg){
-        io.emit(Message.PLAYER, msg);
+        console.log(msg);
+        for(var i = 0; i < clientQueue.length; i++){
+            sock = clientQueue[i];
+            if(sock.id != socket.id){
+                sock.emit(Message.PLAYER, msg);    
+            }
+        }
     });
+    
     
     socket.on(Message.DISCONNECT, function(){
         console.log("a user disconnected");

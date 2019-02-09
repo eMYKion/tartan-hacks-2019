@@ -170,7 +170,12 @@ function update() {
     
     
     
-    var tmp = {x : camera.position.x, y : camera.position.y, z : camera.position.z}; 
+    var tmp = {
+    	x : controls.getObject().position.x, 
+    	y : controls.getObject().position.y, 
+    	z : controls.getObject().position.z
+    };
+    console.log(camera.position);
     socket.emit(Message.PLAYER, tmp);
 	playerMove();
 	doStretch();

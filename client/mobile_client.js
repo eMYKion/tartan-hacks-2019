@@ -9,7 +9,7 @@ var playerBox = new THREE.Mesh (
 );
 
 //set callback to set worldInfo from server
-socket.on(Message.WORLD, function(msg){
+socket.on(Message.PLAYER, function(msg){
     playerInfo.x = msg.x;
     playerInfo.y = msg.y;
     playerInfo.z = msg.z;
@@ -29,6 +29,11 @@ var container = document.getElementById("container");
 
 var renderer = new THREE.WebGLRenderer();
 var camera = new THREE.PerspectiveCamera(VIEW_ANGLE, ASPECT, NEAR, FAR);
+camera.position.y = 10;
+camera.position.x = 5;
+camera.position.z = 5;
+var pos = document.createElement("p");
+document.body.appendChild(pos);
 var loader = new THREE.FBXLoader();
 var scene = new THREE.Scene();
 var pastTime = Date.now();
@@ -53,7 +58,7 @@ requestAnimationFrame(update);
 
 
 function doStretch() {
-    
+    /*
 	var pastScale = room.scale.clone();
 	offset = new  THREE.Vector3(room.position.x - (camera.position.x), 
 								room.position.y - (camera.position.y - EyeHeight),
@@ -80,7 +85,7 @@ function doStretch() {
 	room.position.x = camera.position.x + offset.x;
 	room.position.y = (camera.position.y - EyeHeight) + offset.y;
 	room.position.z = camera.position.z + offset.z;
-    
+    */
     
     //set the message to send
     worldInfo.sx = room.scale.x;
@@ -173,6 +178,7 @@ function update() {
     playerBox.position.x = playerInfo.x;
     playerBox.position.y = playerInfo.y;
     playerBox.position.z = playerInfo.z;
+    pos.text = "" + playerInfo.x + ", " + playerInfo.y + ", " + playerInfo.z; 
     
     controls.update();
 

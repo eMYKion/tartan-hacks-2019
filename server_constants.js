@@ -3,5 +3,5 @@ module.exports = {
     DISCONNECT : "disconnect",
     WORLD : "world",
     STRETCH_REQUEST : "stretch_request",
-    PLAYER : "player",
+    PLAYER : "player"
 };

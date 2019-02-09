@@ -51,7 +51,7 @@ hammertime.on('pan', function(ev) {
 hammertime.get('pinch').set({ enable: true });
 hammertime.on('pinch', function(ev) {
 	console.log(ev);
-	document.getElementById("message").innerHTML = "" + room.scale.x  + ", " +  room.scale.y  + ", " + room.scale.z;
+	
 	//alert("" + room.scale.x  + ", " +  room.scale.y  + ", " + room.scale.z)
 	requestStretch = Math.log(ev.scale)/Math.log(2);
 	requestStretch = Math.min(requestStretch, 1);
@@ -140,11 +140,17 @@ var offset = new THREE.Vector3(0, 0, 0);
 
 buildWorld(0);
 
-controls = new THREE.DeviceOrientationControls(camera);
+
+cameraHolder = new THREE.Group();
+cameraHolder.add(camera);
+
+document.getElementById("message").innerHTML = "" + cameraHolder;
+
+controls = new THREE.DeviceOrientationControls(cameraHolder);
 controls.connect();
-camera.position.y = 10;
-camera.position.x = 5;
-camera.position.z = 5;
+camera.position.y = 0;
+camera.position.x = 0;
+camera.position.z = 0;
 
 //enablePointerLock();
 

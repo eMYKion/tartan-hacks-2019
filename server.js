@@ -62,6 +62,15 @@ io.on(Message.CONNECTION, function(socket){
     });
     
     
+    socket.on(Message.STRETCH_REQUEST, function(msg){
+        for(var i = 0; i < clientQueue.length; i++){
+            sock = clientQueue[i];
+            if(sock.id != socket.id){
+                sock.emit(Message.STRETCH_REQUEST, msg);
+            }
+        }
+    });
+    
     socket.on(Message.DISCONNECT, function(){
         console.log("a user disconnected");
         

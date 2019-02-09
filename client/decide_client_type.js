@@ -53,12 +53,12 @@ var PCRecources = [//must be in order of dependencies
 
 var MobileRecources = [//must be in order of dependencies
     "/DeviceOrientationControls.js",
-    //"/pinch-zoom.js",
+    "/pinch-zoom.js",
     
     "/mobile_client.js"
 ];
 
-if(isMobile()){
+if(!isMobile()){
     for(var i = 0; i < PCRecources.length; i++){
         getResource(PCRecources[i]);
     }

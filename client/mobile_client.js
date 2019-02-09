@@ -15,6 +15,15 @@ socket.on(Message.PLAYER, function(msg){
     playerInfo.z = msg.z;
 });
 
+socket.on(Message.WORLD, function(msg){
+    worldInfo.x = msg.x;
+    worldInfo.y = msg.y;
+    worldInfo.z = msg.z;
+    worldInfo.sx = msg.sx;
+    worldInfo.sy = msg.sy;
+    worldInfo.sz = msg.sz;
+});
+
 var WIDTH = window.innerWidth;
 var HEIGHT = window.innerHeight;
 
@@ -27,12 +36,25 @@ var fallLimit = -100;
 
 var controls, room;
 var container = document.getElementById("container");
+//container.requestFullscreen();
 
 //pinch/zoom
-var evCache = new Array();
-var prevDiff = -1;
+//var evCache = new Array();
+//var prevDiff = -1;
 
-function pointermove_handler(ev) {
+var requestStretch = 1;
+
+var hammertime = new Hammer(container);
+hammertime.on('pan', function(ev) {
+	console.log(ev);
+});
+hammertime.get('pinch').set({ enable: true });
+hammertime.on('pinch', function(ev) {
+	console.log(ev);
+	document.getElementById("message").innerHTML = ev.scale;
+	requestStretch = Math.log(ev.scale)/Math.log(2);
+});
+/*function pointermove_handler(ev) {
  // This function implements a 2-pointer horizontal pinch/zoom gesture. 
  //
  // If the distance between the two pointers has increased (zoom in), 
@@ -41,8 +63,8 @@ function pointermove_handler(ev) {
  //
  // This function sets the target element's border to "dashed" to visually
  // indicate the pointer's target received a move event.
- console.log("pointerMove", ev);
- ev.target.style.border = "dashed";
+ console.log("pointer value:", ev.clientY/HEIGHT);
+ requestStretch = ev.clientY/HEIGHT;
 
  // Find this event in the cache and update its record with this event
  for (var i = 0; i < evCache.length; i++) {
@@ -51,6 +73,8 @@ function pointermove_handler(ev) {
    break;
    }
  }
+ 
+ document.getElementById("message").innerHTML = requestStretch;
 
  // If two pointers are down, check for pinch gestures
  if (evCache.length == 2) {
@@ -64,16 +88,18 @@ function pointermove_handler(ev) {
      }
      if (curDiff < prevDiff) {
        // The distance between the two pointers has decreased
-       log("Pinch moving IN -> Zoom out",ev);
+       log("Pinch moving IN -> Zoom out", ev);
      }
    }
 
    // Cache the distance for the next move event 
    prevDiff = curDiff;
+   console.log(prevDiff);
+   document.getElementById("message").innerHTML = prevDiff;
  }
 }
-
-container.onpointermove = pointermove_handler;
+*/
+//container.onpointermove = pointermove_handler;
 
 
 var renderer = THREE.WebGLRenderer();//aliasing
@@ -116,7 +142,7 @@ var stretchState = 0;
 
 
 function doStretch() {
-    
+    /*
 	//Get the previous amount the room was stretched
 	var pastScale = room.scale.clone();
 	//Get the position of the room relative to the player's feet
@@ -126,7 +152,11 @@ function doStretch() {
 
 	//Calculate our proportions
 	//var stretch = Math.pow(2,Math.sin(Date.now() / 1000));
-	//stretchState = stretchState*.9 + .1*keyboardState.shift
+	
+	console.log(requestStretch);
+	
+	stretchState = requestStretch;
+	
 	var stretch = Math.pow(2, stretchState);
 	var squash = 1 / Math.sqrt(stretch);
 
@@ -148,12 +178,14 @@ function doStretch() {
 	room.position.y = camera.position.y - EyeHeight + offset.y;
 	room.position.z = camera.position.z + offset.z;
     
-    room.scale.x = worldInfo.sx;
-    room.scale.y = worldInfo.sy;
-    room.scale.z = worldInfo.sz;
-    room.position.x = worldInfo.x;
-    room.position.y = worldInfo.y;
-    room.position.z = worldInfo.z;
+    worldInfo.sx = room.scale.x;
+    worldInfo.sy = room.scale.y;
+    worldInfo.sz = room.scale.z;
+    worldInfo.x = room.position.x;
+    worldInfo.y = room.position.y;
+    worldInfo.z = room.position.z;
+    */
+    
 }
 
 /*
@@ -262,9 +294,22 @@ function update() {
 	time = Date.now()
 	deltaTime = (time - pastTime) / 1000;
 	pastTime = time;
-	//console.log(deltaTime);
+	//console.log("Update");
 	//playerMove();
-	doStretch();
+	
+	playerBox.position.x = playerInfo.x;
+    playerBox.position.y = playerInfo.y;
+    playerBox.position.z = playerInfo.z;
+    
+    room.scale.x = worldInfo.sx;
+    room.scale.y = worldInfo.sy;
+    room.scale.z = worldInfo.sz;
+    room.position.x = worldInfo.x;
+    room.position.y = worldInfo.y;
+    room.position.z = worldInfo.z;
+	
+	
+	//doStretch();
 
 	if(endFlag != undefined) {
 		//console.log(controls.getObject().position.distanceTo(endFlag.getWorldPosition()));
@@ -293,9 +338,10 @@ function update() {
 	}
 
     //socket send player
-    playerBox.position.x = playerInfo.x;
-    playerBox.position.y = playerInfo.y;
-    playerBox.position.z = playerInfo.z;
+    
+    socket.emit(Message.STRETCH_REQUEST, {
+    	scale : requestStretch
+    });
     
     controls.update();
   	renderer.render(scene, camera);

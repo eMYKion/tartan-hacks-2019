@@ -1,15 +1,12 @@
 var socket = io();
 
 var worldInfo = {x:0, y:0, z:0, sx:1, sy:1, sz:1};
+var stretchRequest = 1;
 
 //set callback to set worldInfo from server
-socket.on(Message.WORLD, function(msg){
-    worldInfo.x = msg.x;
-    worldInfo.y = msg.y;
-    worldInfo.z = msg.z;
-    worldInfo.sx = msg.sx;
-    worldInfo.sy = msg.sy;
-    worldInfo.sz = msg.sz;
+socket.on(Message.STRETCH_REQUEST, function(msg){
+    stretchRequest = msg.scale;
+    console.log(stretchRequest);
 });
 
 var WIDTH = window.innerWidth;
@@ -63,7 +60,7 @@ var stretchState = 0;
 
 
 function doStretch() {
-    /*
+    
 	//Get the previous amount the room was stretched
 	var pastScale = room.scale.clone();
 	//Get the position of the room relative to the player's feet
@@ -73,7 +70,7 @@ function doStretch() {
 
 	//Calculate our proportions
 	//var stretch = Math.pow(2,Math.sin(Date.now() / 1000));
-	stretchState = stretchState*.9 + .1*keyboardState.shift
+	stretchState = stretchRequest;
 	var stretch = Math.pow(2, stretchState);
 	var squash = 1 / Math.sqrt(stretch);
 
@@ -94,13 +91,19 @@ function doStretch() {
 	room.position.x = controls.getObject().position.x + offset.x;
 	room.position.y = controls.getObject().position.y - EyeHeight + offset.y;
 	room.position.z = controls.getObject().position.z + offset.z;
-    */
-    room.scale.x = worldInfo.sx;
+    
+    /*room.scale.x = worldInfo.sx;
     room.scale.y = worldInfo.sy;
     room.scale.z = worldInfo.sz;
     room.position.x = worldInfo.x;
     room.position.y = worldInfo.y;
-    room.position.z = worldInfo.z;
+    room.position.z = worldInfo.z;*/
+    worldInfo.sx = room.scale.x;
+    worldInfo.sy = room.scale.y;
+    worldInfo.sz = room.scale.z;
+    worldInfo.x = room.position.x;
+    worldInfo.y = room.position.y;
+    worldInfo.z = room.position.z;
 }
 
 function playerMove() {
@@ -242,6 +245,17 @@ function update() {
     	y : controls.getObject().position.y, 
     	z : controls.getObject().position.z
     });
+    
+    socket.emit(Message.WORLD, {
+    	x : worldInfo.x, 
+    	y : worldInfo.y, 
+    	z : worldInfo.z, 
+    	
+    	xs : worldInfo.xs, 
+    	ys : worldInfo.ys, 
+    	zs : worldInfo.zs
+    });
+    
   	renderer.render(scene, camera);
   	requestAnimationFrame(update);
 }

@@ -58,7 +58,7 @@ var MobileRecources = [//must be in order of dependencies
     "/mobile_client.js"
 ];
 
-if(!isMobile()){
+if(isMobile()){
     for(var i = 0; i < PCRecources.length; i++){
         getResource(PCRecources[i]);
     }

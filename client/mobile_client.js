@@ -29,12 +29,52 @@ var controls, room;
 var container = document.getElementById("container");
 
 //pinch/zoom
-var pz = new PinchZoom(container, {minZoom: 0.1, maxZoom: 4});
-pz.enable();
+var evCache = new Array();
+var prevDiff = -1;
 
-document.addEventListener("pz_zoomupdate", function(){
-    console.log("zoomed device");
-});
+function pointermove_handler(ev) {
+ // This function implements a 2-pointer horizontal pinch/zoom gesture. 
+ //
+ // If the distance between the two pointers has increased (zoom in), 
+ // the taget element's background is changed to "pink" and if the 
+ // distance is decreasing (zoom out), the color is changed to "lightblue".
+ //
+ // This function sets the target element's border to "dashed" to visually
+ // indicate the pointer's target received a move event.
+ console.log("pointerMove", ev);
+ ev.target.style.border = "dashed";
+
+ // Find this event in the cache and update its record with this event
+ for (var i = 0; i < evCache.length; i++) {
+   if (ev.pointerId == evCache[i].pointerId) {
+      evCache[i] = ev;
+   break;
+   }
+ }
+
+ // If two pointers are down, check for pinch gestures
+ if (evCache.length == 2) {
+   // Calculate the distance between the two pointers
+   var curDiff = Math.abs(evCache[0].clientX - evCache[1].clientX);
+
+   if (prevDiff > 0) {
+     if (curDiff > prevDiff) {
+       // The distance between the two pointers has increased
+       console.log("Pinch moving OUT -> Zoom in", ev);
+     }
+     if (curDiff < prevDiff) {
+       // The distance between the two pointers has decreased
+       log("Pinch moving IN -> Zoom out",ev);
+     }
+   }
+
+   // Cache the distance for the next move event 
+   prevDiff = curDiff;
+ }
+}
+
+container.onpointermove = pointermove_handler;
+
 
 var renderer = THREE.WebGLRenderer();//aliasing
 var camera = new THREE.PerspectiveCamera(VIEW_ANGLE, ASPECT, NEAR, FAR);

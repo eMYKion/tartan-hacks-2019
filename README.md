@@ -13,3 +13,18 @@ S t r e t c h e d is a puzzle game built around an environment-stretching mechan
 2. socket.io - JavaScript event-driven, real-time networking library
 3. three.js - In-browser graphics rendering library
 4. Blender - 3D modeling/level design
+
+## Requirements
+The server needs several dependencies:
+1. npm
+2. node.js
+3. socket.io
+4. express
+
+## How to run
+```bash
+$ node server.js
+```
+
+If `process.env.PORT` and `process.env.IP` is not defined, the server will default to `PORT = 3000` and `IP = 'localhost'`.
+You can change these default values at the top of `server.js`

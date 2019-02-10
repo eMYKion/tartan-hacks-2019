@@ -15,7 +15,7 @@ S t r e t c h e d is a puzzle game built around an environment-stretching mechan
 4. Blender - 3D modeling/level design
 
 ## Requirements
-The server needs several dependencies:
+The server needs several dependencies. There are included in `node_modules/`
 1. npm
 2. node.js
 3. socket.io
